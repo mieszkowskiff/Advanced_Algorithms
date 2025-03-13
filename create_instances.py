@@ -128,14 +128,3 @@ def create_instance(tree: dict[int: dict[int: int]]) -> dict[int: dict[int: int]
             distances_list[nodeA] = {nodeB: weight for nodeB, weight in distances.items() if len(tree[nodeB]) == 1}
     return distances_list
 
-def main():
-    random.seed(12)
-    n = 10
-    adjacency_list = generate_tree(n)
-    print("Adjacency list:")
-    print(adjacency_list)
-    print("Instance:")
-    instance = create_instance(adjacency_list)
-    print(instance)
-if __name__ == "__main__":
-    main()
