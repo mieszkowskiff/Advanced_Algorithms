@@ -1,7 +1,7 @@
 import random
 import json
 
-def generate_tree(n: int, gamma: float = 0.7) -> dict[int: dict[int: int]]:
+def generate_tree(n: int, gamma: float = 0.8) -> dict[int: dict[int: int]]:
     """
     # Generates a tree with `n` nodes.
     Generates a tree with `n` nodes, but without the nodes of degree 2 (all nodes are either leaves or "intersection" nodes).
@@ -28,8 +28,8 @@ def generate_tree(n: int, gamma: float = 0.7) -> dict[int: dict[int: int]]:
     
     initial_weight = random.randint(1, 100)
     adjacency_list = {
-        1: {0: initial_weight},
-        0: {1: initial_weight}
+        0: {1: initial_weight},
+        1: {0: initial_weight}
     }
 
     beta = 1 / gamma - 1
@@ -79,21 +79,63 @@ def generate_tree(n: int, gamma: float = 0.7) -> dict[int: dict[int: int]]:
     return adjacency_list
 
 
-def save_tree_to_file(tree: dict[int: dict[int: int]], filename: str):
+def save_to_file(dict: dict[int: dict[int: int]], filename: str):
     """
-    # Saves the tree to a file.
-    Saves the tree to a file in JSON format."""
+    # Saves the tree or instance to a file.
+    Saves the tree or instance to a file in JSON format."""
     with open(filename, "w") as file:
-        json.dump(tree, file)
+        json.dump(dict, file)
 
 
-    
+def BFS(tree: dict[int: dict[int: int]], start: int) -> dict[int: int]:
+    """
+    # Breadth-first search.
+    Breadth-first search algorithm is used to find the distances between leaf nodes of the tree.
+
+    ## Parameters:
+    ### `tree`: *dict[int: dict[int: int]]*
+    The tree is represented as an adjacency list.
+
+    ### `start`: *int*
+    The starting node of the BFS.
+
+    ## Returns:
+    A dictionary where the keys are the leaf nodes of the tree and the values are the distances between the starting node and the leaf nodes.
+    """
+    distances = {start: 0}
+    visited = {start}
+    queue = [start]
+
+    while queue:
+        node = queue.pop(0)
+        for neighbour in tree[node].keys():
+            if neighbour not in visited:
+                visited.add(neighbour)
+                queue.append(neighbour)
+                distances[neighbour] = distances[node] + tree[node][neighbour]
+    return distances
+
+def create_instance(tree: dict[int: dict[int: int]]) -> dict[int: dict[int: int]]: 
+    """
+    # Creates an instance from the tree.
+    An instance is matrix of the distances between leaf nodes of the tree.
+
+    """
+    distances_list = {}
+    for nodeA in tree:
+        if len(tree[nodeA]) == 1:
+            distances = BFS(tree, nodeA)
+            distances_list[nodeA] = {nodeB: weight for nodeB, weight in distances.items() if len(tree[nodeB]) == 1}
+    return distances_list
 
 def main():
+    random.seed(12)
     n = 10
     adjacency_list = generate_tree(n)
     print("Adjacency list:")
     print(adjacency_list)
-
+    print("Instance:")
+    instance = create_instance(adjacency_list)
+    print(instance)
 if __name__ == "__main__":
     main()
