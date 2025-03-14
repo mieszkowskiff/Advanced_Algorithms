@@ -135,7 +135,7 @@ def create_instance(tree: dict[int: dict[int: int]]) -> dict[int: dict[int: int]
     return distances_list
 
 if __name__ == "__main__":
-    tree = generate_tree(100)
+    tree = generate_tree(10)
     instance = create_instance(tree)
     save_to_file(tree, "tree.json")
     save_to_file(instance, "instance.json")
