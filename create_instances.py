@@ -83,9 +83,15 @@ def save_to_file(dict: dict[int: dict[int: int]], filename: str):
     """
     # Saves the tree or instance to a file.
     Saves the tree or instance to a file in JSON format."""
-    with open(filename, "w") as file:
+    with open(f"./instances/{filename}", "w") as file:
         json.dump(dict, file)
 
+def load_from_file(filename: str) -> dict[int: dict[int: int]]:
+    """
+    # Loads the tree or instance from a file.
+    Loads the tree or instance from a file in JSON format."""
+    with open(f"./instances/{filename}", "r") as file:
+        return json.load(file)
 
 def BFS(tree: dict[int: dict[int: int]], start: int) -> dict[int: int]:
     """
@@ -128,3 +134,10 @@ def create_instance(tree: dict[int: dict[int: int]]) -> dict[int: dict[int: int]
             distances_list[nodeA] = {nodeB: weight for nodeB, weight in distances.items() if len(tree[nodeB]) == 1}
     return distances_list
 
+if __name__ == "__main__":
+    tree = generate_tree(100)
+    instance = create_instance(tree)
+    save_to_file(tree, "tree.json")
+    save_to_file(instance, "instance.json")
+    print(tree)
+    print(instance)

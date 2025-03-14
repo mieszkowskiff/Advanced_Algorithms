@@ -1,2 +1,3 @@
 .venv/
 instances/
+__pycache__/
