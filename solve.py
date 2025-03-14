@@ -1,5 +1,5 @@
-from utils import load_from_file
-
+from utils import load_from_file, save_to_file
+import time
 
 class Branch:
     def __init__(self, start_node, end_node, length, instance_matrix, queue_of_new_symbols):
@@ -96,8 +96,11 @@ def solve(instance: dict[str: dict[str: int]]) -> dict[str: dict[str: int]]:
 
 if __name__ == "__main__":
     instance = load_from_file("instance.json")
+    start_time = time.time()
     adjacency_list = solve(instance)
-    print(adjacency_list)
+    print(f"Sollution time: {(time.time() - start_time)}s")
+    save_to_file(adjacency_list, "sollution_found.json")
+    print("File saved successfully")
 
     
     

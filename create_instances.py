@@ -1,6 +1,6 @@
 import random
 import utils
-
+import time
 
 def generate_tree(n: int, gamma: float = 0.8) -> dict[int: dict[int: int]]:
     """
@@ -126,12 +126,14 @@ def create_instance(tree: dict[int: dict[int: int]], original_names: bool = Fals
 
 def main():
     random.seed(43)
-    tree = generate_tree(1000)
+    start_time = time.time()
+    tree = generate_tree(10000)
     instance = create_instance(tree)
+    print(f"Instance creation time: {time.time() - start_time}s")
     utils.save_to_file(tree, "tree.json")
     utils.save_to_file(instance, "instance.json")
-    print(tree)
-    print(instance)
+    print("Files saved successfully")
+    
 
 if __name__ == "__main__":
     main()
