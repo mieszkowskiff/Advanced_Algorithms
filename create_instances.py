@@ -1,5 +1,6 @@
 import random
-import json
+import utils
+
 
 def generate_tree(n: int, gamma: float = 0.8) -> dict[int: dict[int: int]]:
     """
@@ -51,7 +52,7 @@ def generate_tree(n: int, gamma: float = 0.8) -> dict[int: dict[int: int]]:
             node_number += 1
             
         else:
-            # We decided to add two new nodes (leaf and internal node)
+            # We decided to add two new nodes (leaf and an internal node)
             parent1 = random.randint(0, node_number - 1)
             parent2 = random.choice(list(adjacency_list[parent1].keys()))
 
@@ -76,22 +77,8 @@ def generate_tree(n: int, gamma: float = 0.8) -> dict[int: dict[int: int]]:
             }
 
             node_number += 2
-    return adjacency_list
+    return utils.rename_nodes(adjacency_list)
 
-
-def save_to_file(dict: dict[int: dict[int: int]], filename: str):
-    """
-    # Saves the tree or instance to a file.
-    Saves the tree or instance to a file in JSON format."""
-    with open(f"./instances/{filename}", "w") as file:
-        json.dump(dict, file)
-
-def load_from_file(filename: str) -> dict[int: dict[int: int]]:
-    """
-    # Loads the tree or instance from a file.
-    Loads the tree or instance from a file in JSON format."""
-    with open(f"./instances/{filename}", "r") as file:
-        return json.load(file)
 
 def BFS(tree: dict[int: dict[int: int]], start: int) -> dict[int: int]:
     """
@@ -121,7 +108,7 @@ def BFS(tree: dict[int: dict[int: int]], start: int) -> dict[int: int]:
                 distances[neighbour] = distances[node] + tree[node][neighbour]
     return distances
 
-def create_instance(tree: dict[int: dict[int: int]]) -> dict[int: dict[int: int]]: 
+def create_instance(tree: dict[int: dict[int: int]], original_names: bool = False) -> dict[int: dict[int: int]]: 
     """
     # Creates an instance from the tree.
     An instance is matrix of the distances between leaf nodes of the tree.
@@ -132,12 +119,19 @@ def create_instance(tree: dict[int: dict[int: int]]) -> dict[int: dict[int: int]
         if len(tree[nodeA]) == 1:
             distances = BFS(tree, nodeA)
             distances_list[nodeA] = {nodeB: weight for nodeB, weight in distances.items() if len(tree[nodeB]) == 1}
-    return distances_list
+    if original_names:
+        return distances_list
+    return utils.rename_nodes(distances_list)
 
-if __name__ == "__main__":
-    tree = generate_tree(10)
+
+def main():
+    random.seed(43)
+    tree = generate_tree(1000)
     instance = create_instance(tree)
-    save_to_file(tree, "tree.json")
-    save_to_file(instance, "instance.json")
+    utils.save_to_file(tree, "tree.json")
+    utils.save_to_file(instance, "instance.json")
     print(tree)
     print(instance)
+
+if __name__ == "__main__":
+    main()

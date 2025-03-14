@@ -8,6 +8,8 @@ The main goal of the project is to create an algorithm, that recreates a tree (a
 
 # Dependencies
 
+Download dependencies and create a folder for the instances of the problem:
 ```{Bash}
 pip install numpy matplotlib
+mkdir instances
 ```

@@ -1,4 +1,4 @@
-from create_instances import load_from_file
+from utils import load_from_file
 
 
 class Branch:
@@ -78,7 +78,7 @@ def solve(instance: dict[str: dict[str: int]]) -> dict[str: dict[str: int]]:
     
     leaves = list(instance.keys())
 
-    queue_of_new_symbols = [str(i) for i in range(100, 200)]
+    queue_of_new_symbols = [f"INTERNAL_NODE_{i}" for i in range(n - 2)]
     root = Branch(leaves[0], leaves[1], instance[leaves[0]][leaves[1]], instance, queue_of_new_symbols)
 
     for leaf in leaves[2:]:
