@@ -127,7 +127,7 @@ def create_instance(tree: dict[int: dict[int: int]], original_names: bool = Fals
 def main():
     random.seed(43)
     start_time = time.time()
-    tree = generate_tree(10000)
+    tree = generate_tree(1000)
     instance = create_instance(tree)
     print(f"Instance creation time: {time.time() - start_time}s")
     utils.save_to_file(tree, "tree.json")
