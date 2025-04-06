@@ -1,8 +1,9 @@
 import random
 import utils
 import time
+import typing
 
-def generate_tree(n: int, gamma: float = 0.8) -> dict[int: dict[int: int]]:
+def generate_tree(n: int, gamma: float = 0.8) -> typing.Dict[int, typing.Dict[int, int]]:
     """
     # Generates a tree with `n` nodes.
     Generates a tree with `n` nodes, but without the nodes of degree 2 (all nodes are either leaves or "intersection" nodes).
@@ -80,7 +81,7 @@ def generate_tree(n: int, gamma: float = 0.8) -> dict[int: dict[int: int]]:
     return utils.rename_nodes(adjacency_list)
 
 
-def BFS(tree: dict[int: dict[int: int]], start: int) -> dict[int: int]:
+def BFS(tree: typing.Dict[int, typing.Dict[int, int]], start: int) -> typing.Dict[int, int]:
     """
     # Breadth-first search.
     Breadth-first search algorithm is used to find the distances between leaf nodes of the tree.
@@ -108,7 +109,7 @@ def BFS(tree: dict[int: dict[int: int]], start: int) -> dict[int: int]:
                 distances[neighbour] = distances[node] + tree[node][neighbour]
     return distances
 
-def create_instance(tree: dict[int: dict[int: int]], original_names: bool = False) -> dict[int: dict[int: int]]: 
+def create_instance(tree: typing.Dict[int, typing.Dict[int, int]], original_names: bool = False) -> typing.Dict[int, typing.Dict[int, int]]: 
     """
     # Creates an instance from the tree.
     An instance is matrix of the distances between leaf nodes of the tree.
@@ -127,11 +128,17 @@ def create_instance(tree: dict[int: dict[int: int]], original_names: bool = Fals
 def main():
     random.seed(43)
     start_time = time.time()
-    tree = generate_tree(10000)
+    tree = generate_tree(8)
     instance = create_instance(tree)
     print(f"Instance creation time: {time.time() - start_time}s")
     utils.save_to_file(tree, "tree.json")
-    utils.save_to_file(instance, "instance.json")
+    
+    #utils.save_to_file(instance, "instance.json")
+    with open('instance.txt', 'w') as f:
+        for src in instance:
+            for dest, weight in instance[src].items():
+                f.write(f"{src} {dest} {weight}\n")
+    
     print("Files saved successfully")
     
 

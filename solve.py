@@ -1,5 +1,6 @@
 from utils import load_from_file, save_to_file
 import time
+import typing
 
 class Branch:
     def __init__(self, start_node, end_node, length, instance_matrix, queue_of_new_symbols):
@@ -64,10 +65,7 @@ class Branch:
         print(f"{indent})")
 
         
-            
-            
-
-def solve(instance: dict[str: dict[str: int]]) -> dict[str: dict[str: int]]:
+def solve(instance: typing.Dict[str, typing.Dict[str, int]]) -> typing.Dict[str, typing.Dict[str, int]]:
     """
     # Recreates the tree from the distance matrix between leaf nodes.
     """
@@ -92,14 +90,32 @@ def solve(instance: dict[str: dict[str: int]]) -> dict[str: dict[str: int]]:
     
     return adjacency_list
 
-    
+def read_graph_from_txt(file_path):
+    graph = {}
+    with open(file_path, 'r') as f:
+        for line in f:
+            src, dest, weight = line.strip().split()
+            weight = int(weight)
+
+            if src not in graph:
+                graph[src] = {src: 0}
+            graph[src][dest] = weight
+    return graph    
 
 if __name__ == "__main__":
-    instance = load_from_file("instance.json")
+    #instance = load_from_file("instance.json")
+    
+    instance = read_graph_from_txt("instance.txt")
+    
     start_time = time.time()
     adjacency_list = solve(instance)
     print(f"Sollution time: {(time.time() - start_time)}s")
-    save_to_file(adjacency_list, "sollution_found.json")
+    #save_to_file(adjacency_list, "sollution_found.json")
+    with open('solution_found.txt', 'w') as f:
+        for src in adjacency_list:
+            for dest, weight in adjacency_list[src].items():
+                f.write(f"{src} {dest} {weight}\n")
+    
     print("File saved successfully")
 
     

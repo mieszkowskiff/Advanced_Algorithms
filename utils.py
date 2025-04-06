@@ -1,7 +1,8 @@
 import string
 import json
+import typing
 
-def generate_labels(n: int, uppercase: bool = True) -> list[str]:
+def generate_labels(n: int, uppercase: bool = True) -> typing.List[str]:
     """
     # Generates array of excel-like labels.
     Generates array of excel-like labels of length `n`.
@@ -25,7 +26,7 @@ def generate_labels(n: int, uppercase: bool = True) -> list[str]:
     
     return result
 
-def rename_nodes(dict) -> dict[str: dict[str: int]]:
+def rename_nodes(dict) -> typing.Dict[str, typing.Dict[str, int]]:
     """
     # Renames the nodes of the tree.
     Renames the nodes of the tree to strings.
@@ -36,14 +37,14 @@ def rename_nodes(dict) -> dict[str: dict[str: int]]:
     mapping = {keys[i]: labels[i] for i in range(n)}
     return {mapping[key]: {mapping[node]: weight for node, weight in value.items()} for key, value in dict.items()}
 
-def save_to_file(dict: dict[int: dict[int: int]], filename: str):
+def save_to_file(dict: typing.Dict[int, typing.Dict[int, int]], filename: str):
     """
     # Saves the tree or instance to a file.
     Saves the tree or instance to a file in JSON format."""
     with open(f"./instances/{filename}", "w") as file:
         json.dump(dict, file)
 
-def load_from_file(filename: str) -> dict[int: dict[int: int]]:
+def load_from_file(filename: str) -> typing.Dict[int, typing.Dict[int, int]]:
     """
     # Loads the tree or instance from a file.
     Loads the tree or instance from a file in JSON format."""
