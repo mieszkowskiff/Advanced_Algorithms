@@ -3,7 +3,7 @@ import utils
 import time
 import typing
 
-def generate_tree(n: int, gamma: float = 0.8) -> typing.Dict[int, typing.Dict[int, int]]:
+def generate_tree(n: int, gamma: float = 0.8, max_weight: int = 10) -> typing.Dict[int, typing.Dict[int, int]]:
     """
     # Generates a tree with `n` nodes.
     Generates a tree with `n` nodes, but without the nodes of degree 2 (all nodes are either leaves or "intersection" nodes).
@@ -28,7 +28,7 @@ def generate_tree(n: int, gamma: float = 0.8) -> typing.Dict[int, typing.Dict[in
     if n == 3:
         raise ValueError("3 as the number of nodes is invalid.")
     
-    initial_weight = random.randint(1, 100)
+    initial_weight = random.randint(1, max_weight)
     adjacency_list = {
         0: {1: initial_weight},
         1: {0: initial_weight}
@@ -46,7 +46,7 @@ def generate_tree(n: int, gamma: float = 0.8) -> typing.Dict[int, typing.Dict[in
             while len(adjacency_list[parent]) == 1:
                 parent = random.randint(0, node_number - 1)
 
-            weight = random.randint(1, 100)
+            weight = random.randint(1, max_weight)
             adjacency_list[parent][node_number] = weight
             adjacency_list[node_number] = {parent: weight}
 
@@ -60,9 +60,9 @@ def generate_tree(n: int, gamma: float = 0.8) -> typing.Dict[int, typing.Dict[in
             adjacency_list[parent1].pop(parent2)
             adjacency_list[parent2].pop(parent1)
 
-            weight1 = random.randint(1, 100)
-            weight2 = random.randint(1, 100)
-            weight3 = random.randint(1, 100)
+            weight1 = random.randint(1, max_weight)
+            weight2 = random.randint(1, max_weight)
+            weight3 = random.randint(1, max_weight)
 
             adjacency_list[parent1][node_number] = weight1
             adjacency_list[parent2][node_number] = weight2
@@ -128,7 +128,7 @@ def create_instance(tree: typing.Dict[int, typing.Dict[int, int]], original_name
 def main():
     random.seed(43)
     start_time = time.time()
-    tree = generate_tree(8)
+    tree = generate_tree(n = 8, gamma = 0.8, max_weight = 10)
     instance = create_instance(tree)
     print(f"Instance creation time: {time.time() - start_time}s")
     utils.save_to_file(tree, "tree.json")
