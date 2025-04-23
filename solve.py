@@ -27,7 +27,10 @@ class Branch:
             print("initial_valid_check FAILED")
             # recurssion failed at some point, valid check failed 
             return False
-
+        
+        d1 = int(d1)
+        d2 = int(d2)
+        d3 = int(d3)
 
         if d1 in self.children:
             # initial_valid_check_from_children
