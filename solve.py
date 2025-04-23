@@ -33,7 +33,6 @@ class Branch:
         d3 = int(d3)
 
         if d1 in self.children:
-            # initial_valid_check_from_children
             # return the check status to the previous recursion calls
             return self.children[d1].add_node(new_node, d3)
         else:
@@ -114,14 +113,14 @@ def solve(instance: typing.Dict[str, typing.Dict[str, int]]) -> typing.Dict[str,
 
 if __name__ == "__main__":
     
-    instance, weights_check = read_graph_from_txt("instance.txt")
+    instance, weights_check = read_graph_from_txt("./instances/instance.txt")
     if weights_check:
         start_time = time.time()
         adjacency_list, valid_check = solve(instance)
         print(f"Sollution time: {(time.time() - start_time)}s")
 
         if valid_check:
-            save_graph_to_txt(adjacency_list, 'solution_found.txt')
+            save_graph_to_txt(adjacency_list, './instances/solution_found.txt')
             print("File saved successfully")
         else:
             print("Input data is not valid. Initial validity check was failed.")

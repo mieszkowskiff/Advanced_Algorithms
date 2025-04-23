@@ -134,7 +134,7 @@ def main():
     utils.save_to_file(tree, "tree.json")
     
     #utils.save_to_file(instance, "instance.json")
-    with open('instance.txt', 'w') as f:
+    with open('./instances/instance.txt', 'w') as f:
         for src in instance:
             for dest, weight in instance[src].items():
                 f.write(f"{src} {dest} {weight}\n")

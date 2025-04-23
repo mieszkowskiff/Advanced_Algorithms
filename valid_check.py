@@ -64,7 +64,7 @@ def bfs_distance(graph, start):
         for neighbor in graph[node]:
             if neighbor not in visited:
                 queue.append((neighbor, dist + graph[node][neighbor]))
-    print(distances)
+                
     return distances
 
 def validate_solution(graph, leaf_nodes, required_distances):
@@ -78,25 +78,16 @@ def validate_solution(graph, leaf_nodes, required_distances):
                 return False
     return True
 
-solution_file = "solution_found.txt"
-instance_file = "instance.txt"
+dic_name = "./instances/"
+solution_file = dic_name + "solution_found.txt"
+instance_file = dic_name + "instance.txt"
 
 graph = read_graph(solution_file)
-
-for it in graph.keys(): 
-    print(it)
-    print(graph[it])
-    print()
 
 if graph is None:
     print("Invalid solution file. Aborting.")
 else:
     required_distances = read_instance(instance_file)
-
-    for it in required_distances.keys(): 
-        print(it)
-        print(required_distances[it])
-        print()
 
     if required_distances is None:
         print("Invalid instance file. Aborting.")
