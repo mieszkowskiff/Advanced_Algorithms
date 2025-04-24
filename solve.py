@@ -1,4 +1,4 @@
-from utils import load_from_file, save_to_file
+from utils import read_graph_from_txt, save_graph_to_txt, initial_valid_check
 import time
 import typing
 
@@ -15,19 +15,34 @@ class Branch:
         distance_to_end = self.instance_matrix[self.end_node][new_node]
 
         d1 = (self.length + distance_to_start - distance_to_end) / 2
-        # d2 = (self.length - distance_to_start + distance_to_end) / 2
+        d2 = (self.length - distance_to_start + distance_to_end) / 2
         d3 = (-self.length + distance_to_start + distance_to_end) / 2
-
-        # validate distances here
+        
+        # d1 can be equal to 0, this means that current node is a start node for 
+        # a new Branch 
+        # if d2 == 0 then d1 == self.length and d3 == distance_to_end which also semms to
+        # be wrong, because the end_node has to be a leaf
+        # d3 cannot be equal to 0, d3 is a length of a new Branch
+        if not initial_valid_check(d1, d2, d3) or (d2 == 0) or (d3 == 0):
+            print("initial_valid_check FAILED")
+            # recurssion failed at some point, valid check failed 
+            return False
+        
+        d1 = int(d1)
+        d2 = int(d2)
+        d3 = int(d3)
 
         if d1 in self.children:
-            self.children[d1].add_node(new_node, d3)
+            # return the check status to the previous recursion calls
+            return self.children[d1].add_node(new_node, d3)
         else:
             if d1 == 0:
                 self.children[d1] = Branch(self.start_node, new_node, d3, self.instance_matrix, self.queue_of_new_symbols)
             else:
                 new_intersection_node = self.queue_of_new_symbols.pop(0)
                 self.children[d1] = Branch(new_intersection_node, new_node, d3, self.instance_matrix, self.queue_of_new_symbols)
+            # recurssion made it to the end without trigerring the check
+            return True
 
     def fill_adjacency_list(self, adjacency_list):
         # TODO: this sort below would be redundant in binary tree dictionary
@@ -79,44 +94,40 @@ def solve(instance: typing.Dict[str, typing.Dict[str, int]]) -> typing.Dict[str,
     queue_of_new_symbols = [f"INTERNAL_NODE_{i}" for i in range(n - 2)]
     root = Branch(leaves[0], leaves[1], instance[leaves[0]][leaves[1]], instance, queue_of_new_symbols)
 
+    valid_check = True
     for leaf in leaves[2:]:
-        root.add_node(leaf, instance[leaves[0]][leaf])
-  
-    adjacency_list = {
-        leaves[0]: dict(),
-    }
+        if not root.add_node(leaf, instance[leaves[0]][leaf]):
+            valid_check = False
+            break
 
-    root.fill_adjacency_list(adjacency_list)
-    
-    return adjacency_list
+    if valid_check:
+        adjacency_list = {
+            leaves[0]: dict(),
+        }
 
-def read_graph_from_txt(file_path):
-    graph = {}
-    with open(file_path, 'r') as f:
-        for line in f:
-            src, dest, weight = line.strip().split()
-            weight = int(weight)
-
-            if src not in graph:
-                graph[src] = {src: 0}
-            graph[src][dest] = weight
-    return graph    
+        root.fill_adjacency_list(adjacency_list)
+        
+        return adjacency_list, valid_check
+    else:   
+        return [], valid_check
 
 if __name__ == "__main__":
-    #instance = load_from_file("instance.json")
     
-    instance = read_graph_from_txt("instance.txt")
+    instance, weights_check = read_graph_from_txt("./instances/instance.txt")
+    if weights_check:
+        start_time = time.time()
+        adjacency_list, valid_check = solve(instance)
+        print(f"Sollution time: {(time.time() - start_time)}s")
+
+        if valid_check:
+            save_graph_to_txt(adjacency_list, './instances/solution_found.txt')
+            print("File saved successfully")
+        else:
+            print("Input data is not valid. Initial validity check was failed.")
+
     
-    start_time = time.time()
-    adjacency_list = solve(instance)
-    print(f"Sollution time: {(time.time() - start_time)}s")
-    #save_to_file(adjacency_list, "sollution_found.json")
-    with open('solution_found.txt', 'w') as f:
-        for src in adjacency_list:
-            for dest, weight in adjacency_list[src].items():
-                f.write(f"{src} {dest} {weight}\n")
     
-    print("File saved successfully")
+    
 
     
     
