@@ -1,6 +1,9 @@
-# reads the graph from file and stores as dict of dicts
-# checks if edges are integers
+
 def read_graph(filename):
+    """
+    Reads the graph from file and stores as dictionary of dictionaries.
+    Checks if edges are integers.
+    """
     graph = {}
     seen_edges = set()
 
@@ -26,9 +29,12 @@ def read_graph(filename):
                 return None
     return graph
 
-# reads required leaf-to-leaf distances
-# checks if paths are integers
+
 def read_instance(filename):
+    """
+    Reads required leaf-to-leaf distances.
+    Checks if paths are integers.
+    """
     required_distances = {}
     with open(filename, 'r') as file:
         for line in file:
@@ -46,8 +52,10 @@ def read_instance(filename):
                 return None
     return required_distances
 
-# BFS for finding the path in a tree
 def bfs_distance(graph, start):
+    """
+    BFS for finding the path in a tree.
+    """
     distances = {}
     # remembering the previous visited node would be sufficient
     visited = set()
