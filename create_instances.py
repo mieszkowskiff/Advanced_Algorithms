@@ -127,8 +127,9 @@ def create_instance(tree: typing.Dict[int, typing.Dict[int, int]], original_name
 
 def main():
     random.seed(43)
+    n = int(input("Enter number of nodes:"))
     start_time = time.time()
-    tree = generate_tree(n = int(input("Enter number of nodes:")), gamma = 0.8, max_weight = 10)
+    tree = generate_tree(n = n, gamma = 0.8, max_weight = 10)
     instance = create_instance(tree)
     print(f"Instance creation time: {time.time() - start_time}s")
     
