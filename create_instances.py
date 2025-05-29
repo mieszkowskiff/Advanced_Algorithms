@@ -128,13 +128,11 @@ def create_instance(tree: typing.Dict[int, typing.Dict[int, int]], original_name
 def main():
     random.seed(43)
     start_time = time.time()
-    tree = generate_tree(n = 8, gamma = 0.8, max_weight = 10)
+    tree = generate_tree(n = int(input("Enter number of nodes:")), gamma = 0.8, max_weight = 10)
     instance = create_instance(tree)
     print(f"Instance creation time: {time.time() - start_time}s")
-    utils.save_to_file(tree, "tree.json")
     
-    #utils.save_to_file(instance, "instance.json")
-    with open('./instances/instance.txt', 'w') as f:
+    with open(input("Enter the path to save the instance file (.txt file): "), 'w') as f:
         for src in instance:
             for dest, weight in instance[src].items():
                 f.write(f"{src} {dest} {weight}\n")

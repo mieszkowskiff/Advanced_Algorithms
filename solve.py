@@ -112,15 +112,14 @@ def solve(instance: typing.Dict[str, typing.Dict[str, int]]) -> typing.Dict[str,
         return [], valid_check
 
 if __name__ == "__main__":
-    
-    instance, weights_check = read_graph_from_txt("./instances/instance.txt")
+    instance, weights_check = read_graph_from_txt(input("Enter the path to the instance file (.txt file):"))
     if weights_check:
         start_time = time.time()
         adjacency_list, valid_check = solve(instance)
         print(f"Sollution time: {(time.time() - start_time)}s")
 
         if valid_check:
-            save_graph_to_txt(adjacency_list, './instances/solution_found.txt')
+            save_graph_to_txt(adjacency_list, input("Enter the path to save the solution file (.txt file): "))
             print("File saved successfully")
         else:
             print("Input data is not valid. Initial validity check was failed.")
