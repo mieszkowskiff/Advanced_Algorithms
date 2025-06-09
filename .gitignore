@@ -1,3 +1,7 @@
 .venv/
 instances/
 __pycache__/
+data_55/
+data_65/
+results/
+tmp/
