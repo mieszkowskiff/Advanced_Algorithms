@@ -2,6 +2,9 @@ import random
 import utils
 import time
 import typing
+import sys
+from collections import defaultdict
+
 
 def generate_tree(n: int, gamma: float = 0.8, max_weight: int = 10) -> typing.Dict[int, typing.Dict[int, int]]:
     """
@@ -125,21 +128,93 @@ def create_instance(tree: typing.Dict[int, typing.Dict[int, int]], original_name
     return utils.rename_nodes(distances_list)
 
 
+
+
+
+def build_adjacency(tree: typing.Dict[str, typing.Dict[str, int]]) -> typing.Dict[str, set]:
+    adj = defaultdict(set)
+    for src in tree:
+        for dest in tree[src]:
+            adj[src].add(dest)
+            adj[dest].add(src)
+    return adj
+
+def assign_indices_with_leaves_first(adj: typing.Dict[str, set]) -> typing.Dict[str, int]:
+    leaves = sorted([node for node in adj if len(adj[node]) == 1])
+    others = sorted([node for node in adj if len(adj[node]) > 1])
+    ordered_nodes = leaves + others
+    label_to_index = {label: idx + 1 for idx, label in enumerate(ordered_nodes)}
+    return label_to_index
+
+def relabel_adjacency(adj: typing.Dict[str, set], label_to_index: typing.Dict[str, int]) -> typing.Dict[int, set]:
+    new_adj = defaultdict(set)
+    for old_node in adj:
+        new_node = label_to_index[old_node]
+        for neighbor in adj[old_node]:
+            new_neighbor = label_to_index[neighbor]
+            new_adj[new_node].add(new_neighbor)
+    return new_adj
+
+def save_adjacency_list(adj: typing.Dict[int, set], path: str):
+    with open(path, 'w') as f:
+        for node in sorted(adj):
+            neighbors = sorted(adj[node])
+            f.write(f"{node}\t{' '.join(str(n) for n in neighbors)}\n")
+
+def save_leaf_distance_matrix(instance: typing.Dict[str, typing.Dict[str, int]],
+                              label_to_index: typing.Dict[str, int],
+                              tree: typing.Dict[str, typing.Dict[str, int]],
+                              path: str):
+
+    leaf_labels = [label for label in tree if len(tree[label]) == 1]
+
+    leaf_labels_sorted = sorted(leaf_labels, key=lambda x: label_to_index[x])
+    k = len(leaf_labels_sorted)
+
+    with open(path, 'w') as f:
+        for i in range(k):
+            row = []
+            for j in range(k):
+                if i == j:
+                    row.append('0')
+                else:
+                    u = leaf_labels_sorted[i]
+                    v = leaf_labels_sorted[j]
+                    try:
+                        dist = instance[u][v]
+                    except KeyError:
+                        dist = instance[v][u]
+                    row.append(str(dist))
+            f.write(' '.join(row) + '\n')
+
 def main():
+    if len(sys.argv) != 4:
+        print("Usage: python filename.py <node_number> <tree_file.txt> <instance_file.txt>")
+        sys.exit(1)
+
+    try:
+        n = int(sys.argv[1])
+        path_tree = sys.argv[2]
+        path_instance = sys.argv[3]
+    except ValueError:
+        print("Error: node_number must be an integer.")
+        sys.exit(1)
+
     random.seed(43)
-    n = int(input("Enter number of nodes:"))
     start_time = time.time()
-    tree = generate_tree(n = n, gamma = 0.8, max_weight = 10)
-    instance = create_instance(tree)
-    print(f"Instance creation time: {time.time() - start_time}s")
-    
-    with open(input("Enter the path to save the instance file (.txt file): "), 'w') as f:
-        for src in instance:
-            for dest, weight in instance[src].items():
-                f.write(f"{src} {dest} {weight}\n")
-    
-    print("Files saved successfully")
-    
+
+    tree = generate_tree(n=n, gamma=0.8, max_weight=10)
+    instance = create_instance(tree, original_names = True)
+
+    adj = build_adjacency(tree)
+    label_to_index = assign_indices_with_leaves_first(adj)
+    relabeled_adj = relabel_adjacency(adj, label_to_index)
+
+    save_adjacency_list(relabeled_adj, path_tree)
+    save_leaf_distance_matrix(instance, label_to_index, tree, path_instance)
+
+    print(f"Finished in {time.time() - start_time:.2f}s")
+    print("Files saved successfully.")
 
 if __name__ == "__main__":
     main()

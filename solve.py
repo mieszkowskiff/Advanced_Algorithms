@@ -110,23 +110,66 @@ def solve(instance: typing.Dict[str, typing.Dict[str, int]]) -> typing.Dict[str,
         return adjacency_list, valid_check
     else:   
         return [], valid_check
+import sys
+import time
+
+def read_instance_matrix(path: str) -> dict:
+    instance = {}
+    with open(path, 'r') as f:
+        lines = [line.strip() for line in f if line.strip()]
+    
+    n = len(lines)
+    for i, line in enumerate(lines):
+        row = list(map(int, line.split()))
+        instance[str(i + 1)] = {}
+        for j, val in enumerate(row):
+            if i != j:
+                instance[str(i + 1)][str(j + 1)] = val
+    return instance
+
+def write_adjacency_list(adj: dict, path: str):
+    leaf_nodes = sorted([node for node in adj if node.isdigit()], key=lambda x: int(x))
+    next_index = max(int(x) for x in leaf_nodes) + 1
+
+    label_to_index = {leaf: int(leaf) for leaf in leaf_nodes}
+    for node in adj:
+        if node not in label_to_index:
+            label_to_index[node] = next_index
+            next_index += 1
+
+    relabeled_adj = {}
+    for node in adj:
+        new_node = label_to_index[node]
+        neighbors = [label_to_index[nei] for nei in adj[node]]
+        relabeled_adj[new_node] = sorted(neighbors)
+
+    with open(path, 'w') as f:
+        for node in sorted(relabeled_adj):
+            neighbors = relabeled_adj[node]
+            f.write(f"{node}\t{' '.join(map(str, neighbors))}\n")
+
+
+def main():
+    if len(sys.argv) != 3:
+        print("Usage: python solve.py <path_to_instance.txt> <path_to_output.txt>")
+        sys.exit(1)
+
+    path_instance = sys.argv[1]
+    path_output = sys.argv[2]
+
+    instance = read_instance_matrix(path_instance)
+    print("Instance loaded.")
+
+    # Rozwiązywanie
+    start_time = time.time()
+    adjacency_list, valid_check = solve(instance)
+    print(f"Solution time: {time.time() - start_time:.2f}s")
+
+    if valid_check:
+        write_adjacency_list(adjacency_list, path_output)
+        print("File saved successfully.")
+    else:
+        print("Input data is not valid. Initial validity check failed.")
 
 if __name__ == "__main__":
-    instance, weights_check = read_graph_from_txt(input("Enter the path to the instance file (.txt file):"))
-    if weights_check:
-        start_time = time.time()
-        adjacency_list, valid_check = solve(instance)
-        print(f"Sollution time: {(time.time() - start_time)}s")
-
-        if valid_check:
-            save_graph_to_txt(adjacency_list, input("Enter the path to save the solution file (.txt file): "))
-            print("File saved successfully")
-        else:
-            print("Input data is not valid. Initial validity check was failed.")
-
-    
-    
-    
-
-    
-    
+    main()
