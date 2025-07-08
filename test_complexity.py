@@ -1,60 +1,44 @@
 import subprocess
-import time
 import re
 import matplotlib.pyplot as plt
 
 def test_instance_creation(nodes: int):
-    # Przygotowanie wejścia dla programu EXE
-    input_data = f"{nodes}\ntesting\n"
-
-    # Uruchomienie programu i przekazanie danych wejściowych
-    process = subprocess.run(
-        ["create_instance.exe"],
-        input=input_data,
-        capture_output = True,
-        text=True
-    )
-
-    output = process.stdout
-
-    # Szukanie czasu w wyjściu
-    match = re.search(r"Instance creation time: ([\d\.]+)s", output)
-    if match:
-        creation_time = float(match.group(1))
-        return creation_time
-    else:
-        print("Nie udało się znaleźć czasu w wyjściu programu.")
-        print("Pełne wyjście:")
-        print(output)
-        return None
-
-
-def solve_instance():
-    # Przygotowanie wejścia: ścieżka do instancji i do pliku wyjściowego
-    input_data = "testing\n_\n"
-
-    # Uruchomienie solve.exe
-    process = subprocess.run(
-        ["solve.exe"],
-        input=input_data,
+    # Uruchomienie create_instances.py z wymaganymi argumentami
+    result = subprocess.run(
+        ["python", "create_instances.py", str(nodes), "tree", "instance"],
         capture_output=True,
         text=True
     )
+    output = result.stdout
 
-    output = process.stdout
-
-    # Szukanie czasu w wyjściu
-    match = re.search(r"Sollution time: ([\d\.]+)s", output)
+    # Szukanie czasu z komunikatu "Finished in 0.00s"
+    match = re.search(r"Finished in ([\d\.]+)s", output)
     if match:
-        solve_time = float(match.group(1))
-        return solve_time
+        return float(match.group(1))
     else:
-        print("Nie udało się znaleźć czasu w wyjściu programu.")
+        print("Nie udało się znaleźć czasu w wyjściu programu create_instances.py.")
         print("Pełne wyjście:")
         print(output)
         return None
 
+def solve_instance():
+    # Uruchomienie solve.py z wymaganymi argumentami
+    result = subprocess.run(
+        ["python", "solve.py", "instance", "output"],
+        capture_output=True,
+        text=True
+    )
+    output = result.stdout
 
+    # Szukanie czasu z komunikatu "Solution time: 0.00s"
+    match = re.search(r"Solution time: ([\d\.]+)s", output)
+    if match:
+        return float(match.group(1))
+    else:
+        print("Nie udało się znaleźć czasu w wyjściu programu solve.py.")
+        print("Pełne wyjście:")
+        print(output)
+        return None
 
 def main():
     instance_creation_time = dict()
@@ -64,23 +48,23 @@ def main():
         print(f"Testowanie dla {n} wierzchołków...")
         instance_creation_time[n] = []
         solving_time[n] = []
-        for i in range(1):
-            instance_creation_time[n].append(test_instance_creation(n))
-            solving_time[n].append(solve_instance())
 
-    plt.figure(figsize=(8, 5))
+        instance_creation_time[n].append(test_instance_creation(n))
+        solving_time[n].append(solve_instance())
 
-    # Seria 1 - czas tworzenia instancji
+    # Przygotowanie danych do wykresów
     X = []
     Y1 = []
     Y2 = []
+
     for n, times in instance_creation_time.items():
         X.extend([n] * len(times))
         Y1.extend(times)
 
-    for n, times in solving_time.items(): 
+    for times in solving_time.values():
         Y2.extend(times)
 
+    # Wykres 1 - czas tworzenia instancji
     plt.figure(figsize=(6, 4))
     plt.scatter(X, Y1, label="Czas tworzenia instancji", color='blue', marker='o')
     plt.xlabel("Liczba wierzchołków w grafie")
@@ -101,8 +85,6 @@ def main():
     plt.grid(True)
     plt.tight_layout()
     plt.show()
-
-
 
 if __name__ == "__main__":
     main()
