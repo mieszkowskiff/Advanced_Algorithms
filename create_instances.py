@@ -189,7 +189,7 @@ def save_leaf_distance_matrix(instance: typing.Dict[str, typing.Dict[str, int]],
 
 def main():
     if len(sys.argv) != 4:
-        print("Usage: python filename.py <node_number> <tree_file.txt> <instance_file.txt>")
+        print("Usage: python create_instances.py <node_number> <tree_file.txt> <instance_file.txt>")
         sys.exit(1)
 
     try:
