@@ -1,19 +1,47 @@
-# Reconstruction
+# Tree reconstruction
 
 ## Introduction
 
-This is a part of 2024 / 2025 summer semester course in Advanced Algorithms at Warsaw University of Technology, faculty of Mathematics and Information Sciences.
+This project is a part of 2024 / 2025 summer semester course in Advanced Algorithms at Warsaw University of Technology, faculty of Mathematics and Information Sciences.
 
 ## Description
 
 The main goal of the project is to create an algorithm, that recreates a tree (acyclic, undirected, consistent graph) knowing only the distances between leaves of this tree.
 
-## Dependencies
+## Environment Setup & Dependencies
 
-Download dependencies and create a folder for the instances of the problem:
+It is highly recommended to use a Python virtual environment to keep your dependencies isolated. Follow the instructions below based on your operating system.
 
-```{Bash}
+### Linux / macOS
+
+```bash
+# 1. Create a virtual environment named 'venv'
+python3 -m venv venv
+
+# 2. Activate the virtual environment
+source venv/bin/activate
+
+# 3. Install required dependencies
 pip install numpy matplotlib
+
+# 4. Create a folder for the instances of the problem
+mkdir instances
+```
+
+## Windows
+
+```bash
+# 1. Create a virtual environment named 'venv'
+python -m venv venv
+
+# 2. Activate the virtual environment
+venv\Scripts\activate
+
+# 3. Install required dependencies
+pip install numpy matplotlib
+
+# 4. Create a folder for the instances of the problem
+mkdir instances
 ```
 
 ## Usage
